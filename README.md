@@ -1,2 +1,6 @@
 # loan_payment_table-izer
-Make regular and principal only payments to see the amortization and per diem interest over the life of a loan.
+Make regular and principal-only payments to see the amortization and per diem interest over the life of a loan.
+
+This is the second little project I've thought of and decided to make using Javascript.  I intend to prove that the difference between making a additional loan payments as principal-only payments and additional regular payments is very small on most loans.
+
+-JP
