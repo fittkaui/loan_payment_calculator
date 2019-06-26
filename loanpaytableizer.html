@@ -1,0 +1,185 @@
+<html>
+<body>
+<h2 id="hello">Loan Payment Table-izer</h2>
+<div>
+    Loan Booking Date: <input type="text" id="bkDate">
+    Interest Rate: <input type="text" id="rate">
+    Loan Amount: <input type="text" id="lnAmount">
+    <input type="button" value="Calculate Initial Per Diem" onclick="getPerDiem()">
+    Initial Per Diem = <p id="initPerDiem" style="display:inline-block;">please submit values</p>
+</div>
+<table>
+  <tr>
+    <th>Payment Date</th>
+    <th>Payment Amount</th>
+    <th>Type</th>
+    <th>Recurrence</th>
+  </tr>
+  <tr>
+    <td><input type="text" id="paymentDate"></td>
+    <td><input type="text" id="paymentAmount"></td>
+    <td>
+      <input type="radio" name="type" value="Regular"> Regular<br>
+      <input type="radio" name="type" value="Principal"> Principal<br>
+    </td>
+    <td>
+      <input type="radio" name="recur" value="One-time"> One-time<br>
+      <input type="radio" name="recur" value="Monthly"> Monthly<br>
+    </td>
+    <td><input type="button" value="Make Payment(s)" onclick="makePayment()"></td>
+  </tr>
+</table>
+<table>
+    <tbody id="pmts">
+      <tr>  
+        <th>Payment Date</th>
+        <th>Payment Amount</th>
+        <th>Type</th>
+        <th>Recurrence</th>
+        <th>Interest Paid</th>
+        <th>Principal Paid</th>
+        <th>New Loan Amount</th>
+        <th>New Per Diem</th>
+        <th>Interest Not Paid</th>
+      </tr>
+    </tbody>
+      
+</table>
+</body>
+<script>
+
+window.onload = init;
+
+/////////////////////OBJECTS///////////////////
+const data = {};
+data.pmtnbr = 1;
+const el = {};  //for DOM query strings/HTML elements
+el.bkdate = document.getElementById("bkDate");
+
+
+
+
+function init() {
+//Testing
+
+  //set Loan Booking Date input field set to today's date 
+  data.bkdate = new Date();
+  el.bkdate.value  =  (data.bkdate.getMonth() + 1) + "/" + data.bkdate.getDate() + "/" + data.bkdate.getFullYear();
+ 
+}
+//testing
+getPerDiem();
+//
+var perDiem;
+
+function getPerDiem() {
+    data.rate = document.getElementById("rate").value/100;
+    //testing
+    if (data.rate == 0) {
+        data.rate = .05;
+    }
+    // set loan amount
+    data.lnAmount = document.getElementById("lnAmount").value;
+    //testing
+    if (data.lnAmount == 0) {
+        data.lnAmount = 50000;
+    }
+    //calc per diem
+    data.perDiem = (data.rate / 365 * data.lnAmount).toFixed(5);
+    document.getElementById("initPerDiem").innerHTML = "$" + data.perDiem;
+    
+}
+
+
+function resetRecurCount() {
+if(el.pmtrecur == "Monthly"){
+    data.recurCount = 1;
+  }
+}
+resetRecurCount();
+
+function makePayment() {
+//set property for payment recurrence
+el.pmtrecur = document.querySelector('input[name="recur"]:checked').value;
+console.log(el.pmtrecur);
+// if one-time or first payment on monthly recurring payment series
+if(el.pmtrecur == "One-time" || el.pmtrecur == "Monthly" && data.recurCount == 1) {
+  console.log("hello first run only");
+  //get loan booking and payment info from input  
+  el.pmtdate = document.getElementById("paymentDate");
+  el.pmtamount = document.getElementById("paymentAmount");
+  el.pmttype = document.querySelector('input[name="type"]:checked').value;
+  
+  data.bkdate = new Date(el.bkdate.value);
+  data.pmtdate = new Date(el.pmtdate.value);//testing
+  if (el.pmtdate.value == "") {el.pmtdate.value = "7/16/2019";}
+//testing
+  if(el.pmtamount.value == "") {el.pmtamount.value = 1000;}
+// 
+}//end if one-time or first payment on monthly recurring payment series
+
+
+//Create HTML elements (table row)
+  var tr = document.createElement('tr');
+    tr.innerHTML = `
+            <td id="pmtdt-${data.pmtnbr}"></td>
+            <td id="pmtamount-${data.pmtnbr}"></td>
+            <td id="pmttype-${data.pmtnbr}"></td>
+            <td id="pmtrecur-${data.pmtnbr}"></td>
+            <td id="intpd-${data.pmtnbr}"></td>
+            <td id="prinpd-${data.pmtnbr}"></td>
+            <td id="nwlnamt-${data.pmtnbr}"></td>
+            <td id="nwdiem-${data.pmtnbr}"></td>
+            <td id="intnpd-${data.pmtnbr}"></td>
+    `;
+tr.setAttribute('class', `pmt-${data.pmtnbr}`);
+document.getElementById("pmts").appendChild(tr);
+  //set data object with payment info
+  data.pmtDate = new Date(el.pmtdate.value);
+  data.pmtAmount = parseFloat(el.pmtamount.value);
+
+//Calculate interest accued by multiplying number of days with per diem
+  if(data.lastpmtdate == undefined){
+  data.lastpmtdate = data.bkdate;
+  }
+  data.intAccrued = parseFloat((((data.pmtDate - data.lastpmtdate)/(1000*60*60*24))* data.perDiem).toFixed(2));
+  if (data.intAccrued <= data.pmtAmount){
+      data.intPaid = data.intAccrued;
+      data.prinPaid = data.pmtAmount - data.intPaid;
+      data.prinPaid = Math.round( data.prinPaid * 1e5 ) / 1e5;
+  }
+  // do later for payment less than int accrued else{}
+
+//Calc new loan amount
+data.nwlnAmount = data.lnAmount - data.prinPaid;
+data.lnAmount = data.nwlnAmount;
+
+//Calc new per diem
+data.perDiem = (data.rate / 365 * data.lnAmount);
+data.perDiem = Math.round( data.perDiem * 1e5 ) / 1e5;
+//Calc interest not paid
+
+//Update UI with payment info
+document.getElementById(`pmtdt-${data.pmtnbr}`).innerHTML = el.pmtdate.value;
+document.getElementById(`pmtamount-${data.pmtnbr}`).innerHTML = data.pmtAmount;
+document.getElementById(`pmttype-${data.pmtnbr}`).innerHTML = el.pmttype;
+document.getElementById(`pmtrecur-${data.pmtnbr}`).innerHTML = el.pmtrecur;
+document.getElementById(`intpd-${data.pmtnbr}`).innerHTML = data.intPaid;
+document.getElementById(`prinpd-${data.pmtnbr}`).innerHTML = data.prinPaid;
+document.getElementById(`nwlnamt-${data.pmtnbr}`).innerHTML = data.nwlnAmount;
+document.getElementById(`nwdiem-${data.pmtnbr}`).innerHTML = data.perDiem;
+//document.getElementById(`intnpd-${data.pmtnbr}`).innerHTML = data.intnpd;
+
+data.lastpmtdate = data.pmtDate;
+data.pmtnbr++;
+
+if (el.pmtrecur == "Monthly") {
+  //advance the payment date one month and contine making payments until paid off
+}
+
+}
+
+
+
+</script>
+</html>
