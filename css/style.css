@@ -1,0 +1,68 @@
+@charset "UTF-8";
+
+#initDiem {
+    display: none;
+    padding-left: 10px;
+}
+
+body{
+    font-family: 'Oswald', sans-serif;
+    font-size: 15px;
+    padding: 15px;
+}
+
+label{
+    font-weight: bold;
+    padding-top: 20px;
+    display: inline-block;
+}
+
+button {
+    padding: 2px 8px;
+    font-weight: bold;
+    font-size:  13px;
+    border-radius: 5px;
+    border-: 2px black;
+}
+
+button:hover {
+    background-color: lightgrey;
+}
+
+#bkDate {
+    width: 70px;
+}
+
+#rate{
+    width: 35px;
+}
+
+#lnamount {
+    width: 70px;
+}
+
+input {
+    margin-right: 10px;
+    text-align: right;
+}
+
+span#percent {
+    margin-left: -9px;
+    padding-right: 5px;
+    
+}
+
+#paymentInput td {
+    padding-right: 10px;
+    padding-left: 15px;;
+}
+
+#pmts td, #pmts th {
+    padding: 5px;
+}
+
+#pmts td {
+    text-align: right;
+    
+}
+
