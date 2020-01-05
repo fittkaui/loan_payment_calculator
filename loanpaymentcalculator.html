@@ -3,80 +3,104 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Comfortaa|Sarpanch:700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">  
   <link rel="stylesheet" href="css/style.css">
  <!--<link rel="shortcut icon" type="image/png" href="img/favicon.png">--> 
 </head>
 <body>
-<h2 id="hello">Loan Payment Visualizer</h2>
-<div>
-    <label for="bkDate">Booking Date: </label><input type="text" id="bkDate">
+<div class="ta-center">
+<h2>Loan Payment Calculator</h2>
+<h3>Loan Input</h3>
+<div id="diemInput">
+    <label for="bkDate">Booking Date: </label><input type="text" id="bkDate" class="width_70">
     <label for="rate">Interest Rate: </label><input type="text" id="rate"><span id="percent">%</span>
-    <label for="lnAmount">Loan Amount: </label><input type="text" id="lnAmount">
-    <button type="button" onclick="getPerDiem()">Calculate Initial Per Diem</button>
-    <div id="initDiem">
-      <label>Initial Per Diem = &nbsp;</label><span id="initPerDiem"></span>
-    </div>
+    <label for="lnAmount">Loan Amount: </label><input type="text" id="lnAmount" class="width_70">
+    <button type="button" id="btn-diem" onclick="getPerDiem(1)">Calculate</button>
+</div>
+<div id="initDiem">
+  <span>The Initial "Per Diem" or Daily Interest Amount is&nbsp;<span id="initPerDiem" class="ow"></span> per day.</span>
+</div>
+<div id="example-car">
+  <span>A <span class="ow">5</span> year or <span class="ow">60</span> month term would be a monthly payment of about &nbsp;<span id="pmt60" class="ow"></span>.</span>
+</div>
+<div id="example-home">
+  <span>A <span class="ow">15</span> year or <span class="ow">180</span> month term would be a monthly payment of about &nbsp;<span id="pmt180" class="ow"></span>.</span>
+  <br>
+  <span>A <span class="ow">30</span> year or <span class="ow">360</span> month term would be a monthly payment of about &nbsp;<span id="pmt360" class="ow"></span>.</span>
+</div>
+<div id="tip1">
+  <span>Make Payments below to find out various payment strategies affect the payoff date and total interest paid.</span >
 </div>
 <br>
 <br>
-<table id="paymentInput">
-  <tr>
-    <th>Payment Date</th>
-    <th>Amount</th>
-    <th>Type</th>
-    <th>Frequency</th>
-  </tr>
-  <tr>
-    <td><input type="text" id="paymentDate"></td>
-    <td><input type="text" id="paymentAmount"></td>
-    <td>
-      <input type="radio" name="type" value="Regular"> Regular<br>
-      <input type="radio" name="type" value="Principal"> Principal<br>
-    </td>
-    <td>
-      <input type="radio" name="recur" value="One-time"> One-time<br>
-      <input type="radio" name="recur" value="Monthly"> Monthly<br>
-    </td>
-    <td><button type="button" onclick="makePayment(1)">Make Payment(s)</button></td>
-    <td><button type="button" onclick="clearPayments()">Clear Payments</button></td>
-  </tr>
-</table>
+<div id="paymentinput-display">
+  <h3>Payment Input</h3>
+  <div id="paymentInput">
+        <div class="inline-top">
+          <label class="ta-left">Payment Date</label><br><input type="text" id="paymentDate" class="width_120">
+        </div>
+        <div class="inline-top">
+          <label>Amount</label><br><input type="text" id="paymentAmount" class="width_120">
+          </div>
+      <div class="inline-top">
+      <label>Type</label>
+        <div class="ta-left">
+        <input type="radio" name="type" value="Regular"> Regular<br>
+        <input type="radio" name="type" value="Principal"> Principal<br>
+        </div>
+      </div>
+      <div class="inline-top">
+      <label>Frequency</label>
+        <div class="ta-left">
+        <input type="radio" name="recur" value="One-time"> One-time<br>
+        <input type="radio" name="recur" value="Monthly"> Monthly<br>
+      </div>
+      </div>
+      <div class="inline-middle">
+        <button type="button" id="submit-btn" onclick="makePayment(1)">Submit Payment</button>
+        <button type="button" id="clear-btn" onclick="clearPayments()">Clear</button>
+      </div>
+  </div>
+</div>
 <br>
-<table>
+<br>
+<div id="payments-display">
+<h3>Payments</h3>
+<table id="payments">
     <tbody id="pmts">
       <tr>  
         <th>Payment Date</th>
         <th>Amount</th>
-        <th>Type</th>
+        <th style="text-align: center;">Type</th>
         <th>Frequency</th>
         <th>Interest</th>
         <th>Principal</th>
         <th>Balance</th>
         <th>Per Diem</th>
-        <th>Interest Not Paid</th>
+        <th>I.N.P.</th>
       </tr>
-    </tbody>
-      
+    </tbody>    
 </table>
+</div>
 <br>
-<table>
-  <tbody id="totals">
-    <tr>  
-      <th>Number of Payments</th>
-      <td id="totpmts">0</td>
-    </tr>
-    <tr>
-      <th>Total Amount Paid</th>
-      <td id="totamtpd">0</td>
-    </tr>
-    <tr>
-      <th>Total Interest Paid</th>
-      <td id="totintpd">0</td>
-    </tr>
-  </tbody>
-    
-</table>
+<br>
+<div id="totals-display">
+  <h3>Totals</h3>
+    <div id="totals-position">
+      <div class="totals" id="totals-current"> 
+            <h4>Current Totals</h4>
+            <div class="total-label">Number of Payments:</div>
+            <div class="inline-top" id="totpmts">0</div>
+            <div class="total-label" >Total Amount Paid:</div>
+            <div class="inline-top" id="totamtpd">0</div>
+            <div class="total-label" >Total Interest Paid:</div>
+            <div class="inline-top" id="totintpd">0</div>
+            <button type="button" id="save-btn" onclick="saveTotals()">Save Totals</button>
+      </div>
+    </div>
+</div> 
+</div>
 </body>
 <script>
 
@@ -99,7 +123,7 @@ function init() {
   
 }
 
-function clearPmtDate() {
+function clearPmtData() {
 
   document.getElementById("paymentDate").value = "";
 
@@ -108,8 +132,8 @@ function clearPmtDate() {
 function clearPayments() {
 
   //delete DOM 
-  const pmtslength = document.getElementById("pmts").children.length - 1;
-    for(i = pmtslength; i >= 1; i--){
+  const pmtslength = document.getElementById("pmts").children.length;
+    for(i = pmtslength -1 ; i >= 1; i--){
       let elem = document.getElementById(`pmt-${i}`);
       elem.parentNode.removeChild(elem);
     }
@@ -117,19 +141,51 @@ function clearPayments() {
   totamtpd.innerHTML = 0;
   totintpd.innerHTML = 0; 
 
-  clearPmtDate();
+  data.nwlnAmount = document.getElementById("lnAmount").value;
+  data.finalpmtdt = '';
+
+  clearPmtData();
+  hideCurrTotals();
+  document.getElementById("payments-display").style.display = "none";
 
 }
 
-function getPerDiem(){
+function PMT(ir, np, pv, fv, type) {
+    /*
+     * ir   - interest rate per month
+     * np   - number of periods (months)
+     * pv   - present value
+     * fv   - future value
+     * type - when the payments are due:
+     *        0: end of the period, e.g. end of month (default)
+     *        1: beginning of period
+     */
+    var pmt, pvif;
+
+    fv || (fv = 0);
+    type || (type = 0);
+
+    if (ir === 0)
+        return -(pv + fv)/np;
+
+    pvif = Math.pow(1 + ir, np);
+    pmt = - ir * pv * (pvif + fv) / (pvif - 1);
+
+    if (type === 1)
+        pmt /= (1 + ir);
+
+    return pmt;
+}
+
+function getPerDiem(x){
   //Set book data and rate
     data.bkdate = new Date(document.getElementById("bkDate").value);
     el.rate = document.getElementById("rate").value;
     data.rate = el.rate/100;
-      //testing
-      //if (data.rate == 0) {
-      //    data.rate = .05;
-      //}
+    if(data.rate < .0025) {
+      alert("Rate must be greater than .25%.");
+      return;
+    }
     if (data.rate == 0) {
       alert("Must Enter Interest Rate.");
       return;
@@ -144,12 +200,37 @@ function getPerDiem(){
       alert("Must Enter Loan Amount.");
       return;
     }
+    if(data.lnAmount < 1){
+      alert("Loan Amount must be at least $1.00.");
+      return;
+    }
     //calc per diem
     data.perDiem = (data.rate / 365 * data.lnAmount).toFixed(5);
     document.getElementById("initDiem").style.display = 'inline-block';
     document.getElementById("initPerDiem").innerHTML = "$" + data.perDiem; 
-
+    //Hide example Payment Amounts (in case example terms change based on loan amount)
+    document.getElementById("example-car").style.display = 'none';
+    document.getElementById("example-home").style.display = 'none';
+    //Get example Payment Amounts
+    if(data.lnAmount < 100000){
+      const pmt60 = (PMT(data.rate/12, 60, -data.lnAmount, 0, 0)).toFixed(2);
+      document.getElementById("example-car").style.display = 'inline-block';
+      document.getElementById("pmt60").innerHTML = "$" + pmt60;
+    }else{
+      const pmt180 = (PMT(data.rate/12, 180, -data.lnAmount, 0, 0)).toFixed(2);
+      const pmt360 = (PMT(data.rate/12, 360, -data.lnAmount, 0, 0)).toFixed(2);
+      document.getElementById("example-home").style.display = 'inline-block';
+      document.getElementById("pmt180").innerHTML = "$" + pmt180;
+      document.getElementById("pmt360").innerHTML = "$" + pmt360;
+    }
+    document.getElementById("tip1").style.display = 'inline-block';
+    document.getElementById("paymentinput-display").style.display = 'inline-block';
     data.intnpd = 0; 
+
+    const a = x;
+  if(a == 1){
+      clearPayments();
+  }  
 }
 
 
@@ -183,10 +264,16 @@ function makePayment(x) {
     return;
   }
 
-  const a = x;
+  if(getPmtAmt() < .2){
+    alert("Payment Amount must be greater than $0.2.");
+    return;
+  }
+
+  let a = x;
   if(a == 1){
     data.pmtnbr = 1;
   }
+
   console.log('////////begin make a pymt ' + data.pmtnbr + '/////');
   //"get" payment details from DOM and format as needed
    el.pmtDate = getPmtDate();
@@ -202,6 +289,14 @@ function makePayment(x) {
       return;
     }
   data.pmtAmount = document.getElementById("paymentAmount").value;
+
+  let minpmt = parseFloat((data.perDiem * 31).toFixed(2));
+      if(data.pmtnbr == 1 && data.pmtAmount <= minpmt){ //needs work because first payment could be a one-time
+        console.log(minpmt);
+        alert(`Payment Amount must be greter than $${minpmt}`);
+        return;
+      }
+
   data.pmttype = getPmtType();
   data.pmtrecur = document.querySelector('input[name="recur"]:checked').value;
             //testing presets
@@ -217,7 +312,6 @@ function makePayment(x) {
     //data.lnAmount = el.lnAmount;
       //  if(el.lnAmount == ''){data.lnAmount = 50000;}
     //data.intnpd = 0;
-
   }
   if(data.pmtnbr != 1){ 
     //get and set data.finalpmtdt
@@ -274,8 +368,6 @@ function makePayment(x) {
             }
           }
 
-          
-
       }else{//data.pmtdate greater than or equal to existingPmtDate
         //make existing payment
 
@@ -317,10 +409,6 @@ function makePayment(x) {
     /////////////////////POST PAYMENT/////////////////////////////////////////POST PAYMENT////////
 
     function postPayment (dt, amt, tp, rcr, lnamt, diem, lstdt, intnpd, before){
-      if(data.pmtnbr == 1 && amt <= diem * 31 ){
-        alert("Payment Amount is too low.");
-        return;
-      }
       console.log('///////begin post payment ' + data.pmtnbr + ' //////');
       //Calculate interest accued by multiplying number of days with per diem
       data.intAccrued = parseFloat((((dt - lstdt)/(1000*60*60*24))* diem).toFixed(2));
@@ -330,7 +418,7 @@ function makePayment(x) {
         if((lnamt - amt) <= 0){
           newtp = 'Regular';
           if(intnpd == 0){
-            alert("Cannot process Pay-off as Principal Payment.  Changing payment type to Regular.");
+            alert("Cannot process Pay-off as Principal Payment.  Changing final payment type to Regular.");
           }
         }else{
           data.prinPaid = amt;
@@ -352,9 +440,12 @@ function makePayment(x) {
             console.log(data.prinPaid + " prin paid");
           }else{//payment less than int accrued 
             lessThanAcrdInt = "True";
-            data.intPaid = parseFloat(amt).toFixed(2);
-            data.prinPaid = (0.00).toFixed(2);
-            data.intnpd = (intnpd - data.intPaid).toFixed(2);
+            data.intPaid = parseFloat(amt);
+            data.prinPaid = parseFloat((0.00).toFixed(2));
+            intnpd = parseFloat(intnpd);
+            data.intnpd = (intnpd + data.intAccrued - data.intPaid).toFixed(2);
+            data.intPaid = (data.intPaid).toFixed(2);
+            data.prinPaid = (data.prinPaid).toFixed(2);
           }
       }
             
@@ -426,7 +517,7 @@ function makePayment(x) {
             element.parentNode.removeChild(element);
           }
         }
-        clearPmtDate();
+        clearPmtData();
         calcTotals();
         return;
       }
@@ -437,21 +528,26 @@ function makePayment(x) {
       data.lastpmtdate = new Date(dt.getTime());
       console.log(data.lastpmtdate);  
 
+      document.getElementById("payments-display").style.display = "inline-block";
     } //end postPayment
 
 const totpmts = document.getElementById("totpmts");
 const totamtpd = document.getElementById("totamtpd");
 const totintpd = document.getElementById("totintpd");
 
+let pmtslength;
+let AmtPd;
+let IntPd;
 
 function calcTotals(){
-  let pmtslength = document.getElementById("pmts").children.length - 1;
-  const AmtPd = calcAmtPd();
-  const IntPd = calcIntPd();
+  pmtslength = document.getElementById("pmts").children.length - 1;
+  AmtPd = calcAmtPd();
+  IntPd = calcIntPd();
+  IntPd = Math.round(IntPd * 1e2) / 1e2;
   
   totpmts.innerHTML = pmtslength;
   totamtpd.innerHTML = AmtPd;
-  totintpd.innerHTML = Math.round(IntPd * 1e2) / 1e2;
+  totintpd.innerHTML = IntPd; //Math.round(IntPd * 1e2) / 1e2;
   function calcAmtPd(){
     let tot = 0;
     for(let i = 1; i <= pmtslength; i++){
@@ -466,6 +562,53 @@ function calcTotals(){
     }
     return tot;
   }
+  showTotals();
 }
+let svdcnt = 1;
+function saveTotals(){
+
+  var div = document.createElement('div');
+          div.innerHTML = `
+  <h4>Saved Totals ${svdcnt}</h4>
+  <div class="total-label">Number of Payments:</div>
+  <div class="inline-top" id="totpmts-${svdcnt}">${pmtslength}</div>
+  <div class="total-label" >Total Amount Paid:</div>
+  <div class="inline-top" id="totamtpd-${svdcnt}">${AmtPd}</div>
+  <div class="total-label" >Total Interest Paid:</div>
+  <div class="inline-top" id="totintpd-${svdcnt}">${IntPd}</div>
+  <button type="button" id="delete-btn" onclick="deleteTotal(${svdcnt})">&nbsp; Delete &nbsp;</button>
+
+          `;
+        div.setAttribute('class', "totals");
+        div.id = `svd-${svdcnt}`;
+        
+        document.getElementById("totals-position").appendChild(div);
+
+        svdcnt++;
+        
+}
+
+function showTotals(){
+  document.getElementById("totals-display").style.display = 'inline-block';
+  document.getElementById("totals-current").style.display = 'inline-block';
+  document.querySelector("#totals-display h3").style.display = "inline-block"; 
+
+  }
+
+function hideCurrTotals(){
+  document.getElementById("totals-current").style.display = 'none';
+  if(document.getElementsByClassName("totals").length == 1){
+    document.querySelector("#totals-display h3").style.display = "none"; //turns off H3 "Totals when no saved totals"
+  }
+}
+
+function deleteTotal(x){
+  let elem = document.getElementById(`svd-${x}`);
+      elem.parentNode.removeChild(elem);
+  if(document.getElementsByClassName("totals").length == 1){
+    document.querySelector("#totals-display h3").style.display = "none"; //turns off H3 "Totals when no saved totals"
+  }
+}
+
 </script>
 </html>
