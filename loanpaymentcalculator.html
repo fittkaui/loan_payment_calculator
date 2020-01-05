@@ -1,0 +1,614 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://fonts.googleapis.com/css?family=Comfortaa|Sarpanch:700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">  
+  <link rel="stylesheet" href="css/style.css">
+ <!--<link rel="shortcut icon" type="image/png" href="img/favicon.png">--> 
+</head>
+<body>
+<div class="ta-center">
+<h2>Loan Payment Calculator</h2>
+<h3>Loan Input</h3>
+<div id="diemInput">
+    <label for="bkDate">Booking Date: </label><input type="text" id="bkDate" class="width_70">
+    <label for="rate">Interest Rate: </label><input type="text" id="rate"><span id="percent">%</span>
+    <label for="lnAmount">Loan Amount: </label><input type="text" id="lnAmount" class="width_70">
+    <button type="button" id="btn-diem" onclick="getPerDiem(1)">Calculate</button>
+</div>
+<div id="initDiem">
+  <span>The Initial "Per Diem" or Daily Interest Amount is&nbsp;<span id="initPerDiem" class="ow"></span> per day.</span>
+</div>
+<div id="example-car">
+  <span>A <span class="ow">5</span> year or <span class="ow">60</span> month term would be a monthly payment of about &nbsp;<span id="pmt60" class="ow"></span>.</span>
+</div>
+<div id="example-home">
+  <span>A <span class="ow">15</span> year or <span class="ow">180</span> month term would be a monthly payment of about &nbsp;<span id="pmt180" class="ow"></span>.</span>
+  <br>
+  <span>A <span class="ow">30</span> year or <span class="ow">360</span> month term would be a monthly payment of about &nbsp;<span id="pmt360" class="ow"></span>.</span>
+</div>
+<div id="tip1">
+  <span>Make Payments below to find out various payment strategies affect the payoff date and total interest paid.</span >
+</div>
+<br>
+<br>
+<div id="paymentinput-display">
+  <h3>Payment Input</h3>
+  <div id="paymentInput">
+        <div class="inline-top">
+          <label class="ta-left">Payment Date</label><br><input type="text" id="paymentDate" class="width_120">
+        </div>
+        <div class="inline-top">
+          <label>Amount</label><br><input type="text" id="paymentAmount" class="width_120">
+          </div>
+      <div class="inline-top">
+      <label>Type</label>
+        <div class="ta-left">
+        <input type="radio" name="type" value="Regular"> Regular<br>
+        <input type="radio" name="type" value="Principal"> Principal<br>
+        </div>
+      </div>
+      <div class="inline-top">
+      <label>Frequency</label>
+        <div class="ta-left">
+        <input type="radio" name="recur" value="One-time"> One-time<br>
+        <input type="radio" name="recur" value="Monthly"> Monthly<br>
+      </div>
+      </div>
+      <div class="inline-middle">
+        <button type="button" id="submit-btn" onclick="makePayment(1)">Submit Payment</button>
+        <button type="button" id="clear-btn" onclick="clearPayments()">Clear</button>
+      </div>
+  </div>
+</div>
+<br>
+<br>
+<div id="payments-display">
+<h3>Payments</h3>
+<table id="payments">
+    <tbody id="pmts">
+      <tr>  
+        <th>Payment Date</th>
+        <th>Amount</th>
+        <th style="text-align: center;">Type</th>
+        <th>Frequency</th>
+        <th>Interest</th>
+        <th>Principal</th>
+        <th>Balance</th>
+        <th>Per Diem</th>
+        <th>I.N.P.</th>
+      </tr>
+    </tbody>    
+</table>
+</div>
+<br>
+<br>
+<div id="totals-display">
+  <h3>Totals</h3>
+    <div id="totals-position">
+      <div class="totals" id="totals-current"> 
+            <h4>Current Totals</h4>
+            <div class="total-label">Number of Payments:</div>
+            <div class="inline-top" id="totpmts">0</div>
+            <div class="total-label" >Total Amount Paid:</div>
+            <div class="inline-top" id="totamtpd">0</div>
+            <div class="total-label" >Total Interest Paid:</div>
+            <div class="inline-top" id="totintpd">0</div>
+            <button type="button" id="save-btn" onclick="saveTotals()">Save Totals</button>
+      </div>
+    </div>
+</div> 
+</div>
+</body>
+<script>
+
+  
+
+/////////////////////OBJECTS & VARIABLES////////////////////////////////////////////////////
+const data = {};
+const el = {};  //for DOM query strings/HTML element values
+
+ init();
+
+function init() {
+
+  //set Loan Booking Date input field to today's date for default
+  data.bkdate = new Date();
+  document.getElementById("bkDate").value  =  (data.bkdate.getMonth() + 1) + "/" + data.bkdate.getDate() + "/" + data.bkdate.getFullYear();
+  //Defaults
+  document.getElementsByName('type')[0].checked = true; //regular
+  document.getElementsByName('recur')[1].checked = true; //monthly
+  
+}
+
+function clearPmtData() {
+
+  document.getElementById("paymentDate").value = "";
+
+}
+
+function clearPayments() {
+
+  //delete DOM 
+  const pmtslength = document.getElementById("pmts").children.length;
+    for(i = pmtslength -1 ; i >= 1; i--){
+      let elem = document.getElementById(`pmt-${i}`);
+      elem.parentNode.removeChild(elem);
+    }
+  totpmts.innerHTML = 0;
+  totamtpd.innerHTML = 0;
+  totintpd.innerHTML = 0; 
+
+  data.nwlnAmount = document.getElementById("lnAmount").value;
+  data.finalpmtdt = '';
+
+  clearPmtData();
+  hideCurrTotals();
+  document.getElementById("payments-display").style.display = "none";
+
+}
+
+function PMT(ir, np, pv, fv, type) {
+    /*
+     * ir   - interest rate per month
+     * np   - number of periods (months)
+     * pv   - present value
+     * fv   - future value
+     * type - when the payments are due:
+     *        0: end of the period, e.g. end of month (default)
+     *        1: beginning of period
+     */
+    var pmt, pvif;
+
+    fv || (fv = 0);
+    type || (type = 0);
+
+    if (ir === 0)
+        return -(pv + fv)/np;
+
+    pvif = Math.pow(1 + ir, np);
+    pmt = - ir * pv * (pvif + fv) / (pvif - 1);
+
+    if (type === 1)
+        pmt /= (1 + ir);
+
+    return pmt;
+}
+
+function getPerDiem(x){
+  //Set book data and rate
+    data.bkdate = new Date(document.getElementById("bkDate").value);
+    el.rate = document.getElementById("rate").value;
+    data.rate = el.rate/100;
+    if(data.rate < .0025) {
+      alert("Rate must be greater than .25%.");
+      return;
+    }
+    if (data.rate == 0) {
+      alert("Must Enter Interest Rate.");
+      return;
+    }
+    // set loan amount
+    data.lnAmount = document.getElementById("lnAmount").value;
+        //testing
+        //if (data.lnAmount == 0) {
+         //   data.lnAmount = 50000;
+        //}
+    if(data.lnAmount == 0){
+      alert("Must Enter Loan Amount.");
+      return;
+    }
+    if(data.lnAmount < 1){
+      alert("Loan Amount must be at least $1.00.");
+      return;
+    }
+    //calc per diem
+    data.perDiem = (data.rate / 365 * data.lnAmount).toFixed(5);
+    document.getElementById("initDiem").style.display = 'inline-block';
+    document.getElementById("initPerDiem").innerHTML = "$" + data.perDiem; 
+    //Hide example Payment Amounts (in case example terms change based on loan amount)
+    document.getElementById("example-car").style.display = 'none';
+    document.getElementById("example-home").style.display = 'none';
+    //Get example Payment Amounts
+    if(data.lnAmount < 100000){
+      const pmt60 = (PMT(data.rate/12, 60, -data.lnAmount, 0, 0)).toFixed(2);
+      document.getElementById("example-car").style.display = 'inline-block';
+      document.getElementById("pmt60").innerHTML = "$" + pmt60;
+    }else{
+      const pmt180 = (PMT(data.rate/12, 180, -data.lnAmount, 0, 0)).toFixed(2);
+      const pmt360 = (PMT(data.rate/12, 360, -data.lnAmount, 0, 0)).toFixed(2);
+      document.getElementById("example-home").style.display = 'inline-block';
+      document.getElementById("pmt180").innerHTML = "$" + pmt180;
+      document.getElementById("pmt360").innerHTML = "$" + pmt360;
+    }
+    document.getElementById("tip1").style.display = 'inline-block';
+    document.getElementById("paymentinput-display").style.display = 'inline-block';
+    data.intnpd = 0; 
+
+    const a = x;
+  if(a == 1){
+      clearPayments();
+  }  
+}
+
+
+//"get" function definitions
+function getPmtType() {
+  return document.querySelector('input[name="type"]:checked').value;
+}
+function getPmtDate(){
+  return document.getElementById("paymentDate").value;
+}
+
+function getPmtAmt(){
+  return document.getElementById("paymentAmount").value;
+}
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+///// MAKE A PAYMENT ///////////////////////////////////////////////////////// MAKE A PAYMENT ////////////////////////////
+
+function makePayment(x) {
+
+  if(document.getElementById("initPerDiem").innerHTML == ""){
+    alert("You Must Calculate Initial Per Diem Before Making a Payment");
+    return;
+  }
+
+  if(getPmtAmt() == ''){
+    alert("Enter a Payment Amount.");
+    return;
+  }
+
+  if(getPmtAmt() < .2){
+    alert("Payment Amount must be greater than $0.2.");
+    return;
+  }
+
+  let a = x;
+  if(a == 1){
+    data.pmtnbr = 1;
+  }
+
+  console.log('////////begin make a pymt ' + data.pmtnbr + '/////');
+  //"get" payment details from DOM and format as needed
+   el.pmtDate = getPmtDate();
+            //testing preset
+            if(el.pmtDate == ''){
+              let defDate =  new Date();
+              defDate = new Date(defDate.setMonth( defDate.getMonth() + 1 ));
+              el.pmtDate = (defDate.getMonth() + 1) + "/" + defDate.getDate() + "/" + defDate.getFullYear();
+              }
+  data.pmtDate = new Date(el.pmtDate);
+    if(data.pmtDate.getDate() > 28){
+      alert("Payments must be between the 1st and 28th of the month.");
+      return;
+    }
+  data.pmtAmount = document.getElementById("paymentAmount").value;
+
+  let minpmt = parseFloat((data.perDiem * 31).toFixed(2));
+      if(data.pmtnbr == 1 && data.pmtAmount <= minpmt){ //needs work because first payment could be a one-time
+        console.log(minpmt);
+        alert(`Payment Amount must be greter than $${minpmt}`);
+        return;
+      }
+
+  data.pmttype = getPmtType();
+  data.pmtrecur = document.querySelector('input[name="recur"]:checked').value;
+            //testing presets
+                    if(data.pmtAmount == ""){data.pmtAmount = 1000;}  
+                     //if(a == 100){
+                          //  el.pmtdate.value = "1/17/2020";
+                          //  el.pmtamount.value = "100";
+                          //  data.pmttype = 'Principal'
+                          //}          
+  if(data.pmtnbr == 1){
+    data.lastpmtdate = data.bkdate;
+    getPerDiem();
+    //data.lnAmount = el.lnAmount;
+      //  if(el.lnAmount == ''){data.lnAmount = 50000;}
+    //data.intnpd = 0;
+  }
+  if(data.pmtnbr != 1){ 
+    //get and set data.finalpmtdt
+    var lstpmt = document.getElementById("pmts").lastElementChild;
+    data.finalpmtdt = new Date(lstpmt.firstElementChild.innerHTML);
+  }
+  if(data.nwlnAmount <= 0 && data.pmtDate >= data.finalpmtdt && data.pmtnbr !== 1 && data.pmtrecur == "Monthly"){
+    return;
+  }else if(data.nwlnAmount <= 0 && data.pmtDate >= data.finalpmtdt){
+    alert("Loan is already payed off, and you're payment is after the final payment date."); 
+  }else if(data.pmtDate < data.bkdate){
+    alert("Payment must be after Booking Date.");
+  }else{ 
+    let existingPmtDate = -1;//is this needed?
+    //if a payment exists with current payment number
+    if(document.getElementById(`pmtdt-${data.pmtnbr}`)){
+      existingPmtDate = new Date(document.getElementById(`pmtdt-${data.pmtnbr}`).innerHTML);
+      console.log(existingPmtDate);
+      if(a == 'noCurrent'){ //for making existing pmts 
+        data.pmtDate.setMonth(existingPmtDate.getMonth() + 1000); //needs eligant rework 
+      }
+
+      if(data.pmtDate < existingPmtDate){
+        console.log("payment date less than existing pymt");
+        //iterate the payment number on the remaining existing payments
+        const pmtslength = document.getElementById("pmts").children.length - 1;
+        for(i = pmtslength; i >= data.pmtnbr; i--){
+        document.getElementById(`pmt-${i}`).id = 'pmt-' + (i + 1);  
+        document.getElementById(`pmtdt-${i}`).id = 'pmtdt-' + (i + 1);
+        document.getElementById(`pmtamount-${i}`).id = 'pmtamount-' + (i + 1);
+        document.getElementById(`pmttype-${i}`).id = 'pmttype-' + (i + 1);
+        document.getElementById(`pmtrecur-${i}`).id = 'pmtrecur-' + (i + 1);
+        document.getElementById(`intpd-${i}`).id = 'intpd-' + (i + 1);
+        document.getElementById(`prinpd-${i}`).id = 'prinpd-' + (i + 1);
+        document.getElementById(`nwlnamt-${i}`).id = 'nwlnamt-' + (i + 1);
+        document.getElementById(`nwdiem-${i}`).id = 'nwdiem-' + (i + 1);
+        document.getElementById(`intnpd-${i}`).id = 'intnpd-' + (i + 1);
+        }
+          
+          //make current payment 
+          postPayment(data.pmtDate, data.pmtAmount, data.pmttype, data.pmtrecur, data.lnAmount, data.perDiem, data.lastpmtdate, data.intnpd, data.pmtnbr); //pass payment number to insert before
+
+          //if recurring set current pmt to next recurrance
+          if(data.pmtrecur == 'Monthly' && data.nwlnAmount > 0) {     
+          //advance the payment date one month 
+          data.pmtDate.setMonth(data.pmtDate.getMonth() + 1);
+          document.getElementById("paymentDate").value = (data.pmtDate.getMonth() + 1) + '/' + data.pmtDate.getDate() + '/' +  data.pmtDate.getFullYear();   
+          makePayment();
+          }
+          //if not recurring finish making existing payments
+          else{
+            if(data.lnAmount > 0){
+              makePayment('noCurrent');
+            }
+          }
+
+      }else{//data.pmtdate greater than or equal to existingPmtDate
+        //make existing payment
+
+        let exAmt = document.getElementById(`pmtamount-${data.pmtnbr}`).innerHTML;
+        let exTp = document.getElementById(`pmttype-${data.pmtnbr}`).innerHTML;
+        let exRcr = document.getElementById(`pmtrecur-${data.pmtnbr}`).innerHTML;
+        postPayment (existingPmtDate, exAmt, exTp, exRcr, data.lnAmount, data.perDiem, data.lastpmtdate, data.intnpd, 0); //0 is to not pass before for inserting between existing pymts
+        
+
+          //make current payment (or next existing)
+        if(x == 'noCurrent'){
+          if(data.lnAmount > 0){
+            makePayment('noCurrent');
+          }
+        }else{
+          if(data.lnAmount > 0){
+           makePayment();
+          }
+        }
+      }
+    }else{ //if no existing payments, post current payment
+      if(x !== 'noCurrent'){ //to not post current payment when called with "no current" arg
+      postPayment(data.pmtDate, data.pmtAmount, data.pmttype, data.pmtrecur, data.lnAmount, data.perDiem, data.lastpmtdate, data.intnpd);
+      }
+    }
+            //iterate to next payment if recurring
+            
+      if(data.pmtrecur == 'Monthly' && data.nwlnAmount > 0) {     
+      //advance the payment date one month and contine making payments until paid off
+      data.pmtDate.setMonth(data.pmtDate.getMonth() + 1);
+      document.getElementById("paymentDate").value = (data.pmtDate.getMonth() + 1) + '/' + data.pmtDate.getDate() + '/' +  data.pmtDate.getFullYear();
+      
+      makePayment();    
+      }
+  }//end else 
+}// end makePayment 
+
+
+    /////////////////////POST PAYMENT/////////////////////////////////////////POST PAYMENT////////
+
+    function postPayment (dt, amt, tp, rcr, lnamt, diem, lstdt, intnpd, before){
+      console.log('///////begin post payment ' + data.pmtnbr + ' //////');
+      //Calculate interest accued by multiplying number of days with per diem
+      data.intAccrued = parseFloat((((dt - lstdt)/(1000*60*60*24))* diem).toFixed(2));
+      let newtp; //for type reassingment (when needed)
+      if (tp == 'Principal'){
+        console.log('Principal PAYMENT');
+        if((lnamt - amt) <= 0){
+          newtp = 'Regular';
+          if(intnpd == 0){
+            alert("Cannot process Pay-off as Principal Payment.  Changing final payment type to Regular.");
+          }
+        }else{
+          data.prinPaid = amt;
+          data.intPaid = "0.00";
+          data.intnpd = (Math.round((parseFloat(intnpd) + parseFloat(data.intAccrued)) * 1e2) / 1e2).toFixed(2);
+        }
+      }
+      let lessThanAcrdInt = "False";
+      if (tp == 'Regular' || newtp == 'Regular'){
+          console.log('Regular Payment');
+          if (data.intAccrued + parseFloat(data.intnpd) <= parseFloat(amt)){
+            console.log(data.intAccrued + " intAccrued " + data.intnpd + " intnpd");
+            data.intPaid = (Math.round((data.intAccrued + parseFloat(data.intnpd))* 1e5) / 1e5).toFixed(2);
+            console.log(data.intPaid + " data.intPaid")
+            data.prinPaid = amt - data.intPaid;
+            data.prinPaid = (Math.round( data.prinPaid * 1e2 ) / 1e2).toFixed(2);
+            data.intnpd = 0;
+            data.intnpd = data.intnpd.toFixed(2);
+            console.log(data.prinPaid + " prin paid");
+          }else{//payment less than int accrued 
+            lessThanAcrdInt = "True";
+            data.intPaid = parseFloat(amt);
+            data.prinPaid = parseFloat((0.00).toFixed(2));
+            intnpd = parseFloat(intnpd);
+            data.intnpd = (intnpd + data.intAccrued - data.intPaid).toFixed(2);
+            data.intPaid = (data.intPaid).toFixed(2);
+            data.prinPaid = (data.prinPaid).toFixed(2);
+          }
+      }
+            
+      //Calc new loan amount
+      data.nwlnAmount = (lnamt - data.prinPaid).toFixed(2);
+      data.lnAmount = data.nwlnAmount;
+               
+
+      //Calc new per diem if Regular Payment
+      if(lessThanAcrdInt == "False"){ //tp == 'Regular' && 
+        data.perDiem = (data.rate / 365 * data.lnAmount);
+        data.perDiem = Math.round( data.perDiem * 1e5 ) / 1e5;
+      }
+      //Calc interest not paid
+
+      //Create HTML elements (table row) if not reprocessing exisiting payment
+      if(document.getElementById(`pmtdt-${data.pmtnbr}`) == null){
+        var tr = document.createElement('tr');
+          tr.innerHTML = `
+                  <td id="pmtdt-${data.pmtnbr}"></td>
+                  <td id="pmtamount-${data.pmtnbr}"></td>
+                  <td id="pmttype-${data.pmtnbr}"></td>
+                  <td id="pmtrecur-${data.pmtnbr}"></td>
+                  <td id="intpd-${data.pmtnbr}"></td>
+                  <td id="prinpd-${data.pmtnbr}"></td>
+                  <td id="nwlnamt-${data.pmtnbr}"></td>
+                  <td id="nwdiem-${data.pmtnbr}"></td>
+                  <td id="intnpd-${data.pmtnbr}"></td>
+          `;
+        tr.setAttribute('class', "payment");
+        tr.id = `pmt-${data.pmtnbr}`;
+        if(before > 0){
+        document.getElementById("pmts").insertBefore(tr, document.getElementById("pmts").childNodes[before + 2]);  //before + 2 due to a header row and a "text node" which I don't fully understand
+        }else{
+        document.getElementById("pmts").appendChild(tr);
+        }
+      }
+
+      //Update UI with payment info
+      //document.getElementById(`pmtdt-${data.pmtnbr}`).innerHTML = el.pmtdate.value;
+      console.log(dt);
+
+      document.getElementById(`pmtdt-${data.pmtnbr}`).innerHTML = (dt.getMonth() + 1) + '/' + dt.getDate() + '/' +  dt.getFullYear();
+      document.getElementById(`pmtamount-${data.pmtnbr}`).innerHTML = parseFloat(amt).toFixed(2);
+      document.getElementById(`pmttype-${data.pmtnbr}`).innerHTML = tp; 
+      if(newtp == 'Regular'){
+        document.getElementById(`pmttype-${data.pmtnbr}`).innerHTML = newtp;
+      }
+      document.getElementById(`pmtrecur-${data.pmtnbr}`).innerHTML = rcr;
+      document.getElementById(`intpd-${data.pmtnbr}`).innerHTML = data.intPaid;
+      document.getElementById(`prinpd-${data.pmtnbr}`).innerHTML = data.prinPaid;
+      document.getElementById(`nwlnamt-${data.pmtnbr}`).innerHTML = data.lnAmount;
+      document.getElementById(`nwdiem-${data.pmtnbr}`).innerHTML = data.perDiem;
+      document.getElementById(`intnpd-${data.pmtnbr}`).innerHTML = data.intnpd;
+
+      //process payoff if necessary
+      if(data.lnAmount <= 0){
+        document.getElementById(`prinpd-${data.pmtnbr}`).innerHTML = Math.round((parseFloat(data.prinPaid) + parseFloat(data.lnAmount)) * 1e5)/1e5;
+        document.getElementById(`pmtamount-${data.pmtnbr}`).innerHTML = Math.round((parseFloat(amt) + parseFloat(data.lnAmount)) * 1e5)/1e5;
+        document.getElementById(`nwlnamt-${data.pmtnbr}`).innerHTML = 0.00;
+        document.getElementById(`nwdiem-${data.pmtnbr}`).innerHTML = 0.00;
+        
+        //delete existing payments after final payment
+        if(document.getElementById(`pmtdt-${data.pmtnbr + 1}`)){
+          console.log("Deleting pmts");
+          let rmpmtslength = document.getElementById("pmts").children.length - 1 - data.pmtnbr;
+          for(i = data.pmtnbr + 1; i <= rmpmtslength + data.pmtnbr; i++){ 
+            let element = document.getElementById(`pmt-${i}`);
+            element.parentNode.removeChild(element);
+          }
+        }
+        clearPmtData();
+        calcTotals();
+        return;
+      }
+
+      //increments and resets///
+      data.pmtnbr++;
+      //data.recurCount++;
+      data.lastpmtdate = new Date(dt.getTime());
+      console.log(data.lastpmtdate);  
+
+      document.getElementById("payments-display").style.display = "inline-block";
+    } //end postPayment
+
+const totpmts = document.getElementById("totpmts");
+const totamtpd = document.getElementById("totamtpd");
+const totintpd = document.getElementById("totintpd");
+
+let pmtslength;
+let AmtPd;
+let IntPd;
+
+function calcTotals(){
+  pmtslength = document.getElementById("pmts").children.length - 1;
+  AmtPd = calcAmtPd();
+  IntPd = calcIntPd();
+  IntPd = Math.round(IntPd * 1e2) / 1e2;
+  
+  totpmts.innerHTML = pmtslength;
+  totamtpd.innerHTML = AmtPd;
+  totintpd.innerHTML = IntPd; //Math.round(IntPd * 1e2) / 1e2;
+  function calcAmtPd(){
+    let tot = 0;
+    for(let i = 1; i <= pmtslength; i++){
+      tot = tot + parseFloat(document.getElementById(`pmtamount-${i}`).innerHTML);
+    }
+    return tot;
+  }
+  function calcIntPd(){
+    let tot = 0;
+    for(let i = 1; i <= pmtslength; i++){
+      tot = tot + parseFloat(document.getElementById(`intpd-${i}`).innerHTML);
+    }
+    return tot;
+  }
+  showTotals();
+}
+let svdcnt = 1;
+function saveTotals(){
+
+  var div = document.createElement('div');
+          div.innerHTML = `
+  <h4>Saved Totals ${svdcnt}</h4>
+  <div class="total-label">Number of Payments:</div>
+  <div class="inline-top" id="totpmts-${svdcnt}">${pmtslength}</div>
+  <div class="total-label" >Total Amount Paid:</div>
+  <div class="inline-top" id="totamtpd-${svdcnt}">${AmtPd}</div>
+  <div class="total-label" >Total Interest Paid:</div>
+  <div class="inline-top" id="totintpd-${svdcnt}">${IntPd}</div>
+  <button type="button" id="delete-btn" onclick="deleteTotal(${svdcnt})">&nbsp; Delete &nbsp;</button>
+
+          `;
+        div.setAttribute('class', "totals");
+        div.id = `svd-${svdcnt}`;
+        
+        document.getElementById("totals-position").appendChild(div);
+
+        svdcnt++;
+        
+}
+
+function showTotals(){
+  document.getElementById("totals-display").style.display = 'inline-block';
+  document.getElementById("totals-current").style.display = 'inline-block';
+  document.querySelector("#totals-display h3").style.display = "inline-block"; 
+
+  }
+
+function hideCurrTotals(){
+  document.getElementById("totals-current").style.display = 'none';
+  if(document.getElementsByClassName("totals").length == 1){
+    document.querySelector("#totals-display h3").style.display = "none"; //turns off H3 "Totals when no saved totals"
+  }
+}
+
+function deleteTotal(x){
+  let elem = document.getElementById(`svd-${x}`);
+      elem.parentNode.removeChild(elem);
+  if(document.getElementsByClassName("totals").length == 1){
+    document.querySelector("#totals-display h3").style.display = "none"; //turns off H3 "Totals when no saved totals"
+  }
+}
+
+</script>
+</html>

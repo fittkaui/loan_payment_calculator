@@ -1,68 +1,275 @@
 @charset "UTF-8";
 
-#initDiem {
+input[type="radio"]{
+    margin-top: 6px;
+}
+
+input[type="radio"]:focus{
+    outline: none;
+    box-shadow: 0 0 3px 2px rgb(16,255,0);
+    border-radius: 6px;
+}
+
+input[type='radio']:after {
+    width: 12px;
+    height: 12px;
+    border-radius: 12px;
+    
+    left: -1px;
+    position: relative;
+    background-color: white;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 1px solid black;
+}
+
+input[type='radio']:checked:after {
+    width: 12px;
+    height: 12px;
+    border-radius: 12px;
+   
+    left: -1px;
+    position: relative;
+    background-color: #282929;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 1px solid black;
+}
+
+#submit-btn {
+    margin-left: 10px;
+}
+
+#clear-btn {
+    margin-left: 10px;
+}
+
+.inline-middle {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.inline-top {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 20px;
+}
+
+.ta-right {
+    text-align: right;
+}
+
+.ta-center {
+    text-align: center;
+}
+
+.ta-left {
+    text-align: left;
+}
+
+.width_120 {
+    width: 120px;
+}
+
+h2 {
+    font-family: 'Comfortaa','Raleway';
+    text-align: center;
+    font-size: 53px;
+    color: black;
+    display:inline-block;
+    /*text-shadow:4px 2px 18px #0ff, -4px -2px 18px #0ff;*/
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+h3 {
+    font-family: 'Raleway';
+    font-size: 24px;
+    letter-spacing: 1px;
+    color: black;
+    display: inline-block;
+    padding: 5px 20px;
+    margin: 0;
+    margin-left: -42px;
+    text-align: left;
+    width: 750px;
+}
+
+h4 {
+    font-family: 'Raleway';
+    font-size: 16px;
+    padding: 3px;
+    margin-top: -12px;
+    margin-bottom: 5px;
+}
+
+#diemInput, #paymentInput {
+    background-color: white;
+    padding: 20px;
+    width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+   /* box-shadow: 3px 0 10px white;   */ 
+
+}
+
+#payments{
+    background-color: white;
+    width: 790px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 3px 0 10px white;
+}
+
+#totals-display{
     display: none;
-    padding-left: 10px;
+}
+
+.totals {
+    background-color: white;
+    width: 250px;
+    font-weight: bold;
+    /*position: absolute;*/
+    float: left;
+    padding: 20px 0 15px 0;
+    margin-bottom: 40px;
+    margin-left: 8px;
+    box-shadow: 3px 1px 8px white;
+}
+
+
+
+#totals-position { 
+    width: 790px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 180px;
+}
+
+#bkDate, #lnAmount, #rate {
+    margin-left: 2px;
+}
+
+#bkDate, #lnAmount {
+    margin-right: 10px;
+    
+}
+
+span#percent {
+   
+    margin-right: 10px;
+    margin-left: 2px;
+    
+}
+
+#initDiem, #example-car, #example-home, #tip1{
+    display: none;
+    font-family: 'Raleway','Oswald', sans-serif;
+    margin-top: 20px;
+    padding: 5px 5px;
+    
+    background-color: rgba( 255, 255, 255, .5);
+}
+
+.ow {
+    font-family: 'Oswald', sans-serif;
 }
 
 body{
     font-family: 'Oswald', sans-serif;
     font-size: 15px;
     padding: 15px;
+    /*background-image: url("../img/nl.jpg");
+    background-size: cover;*/
+    background-color: white;
+}
+
+.ta-center {
+    background-color: lightgray;
+    width: 970px;
+    margin: 0 auto;
 }
 
 label{
-    font-weight: bold;
-    padding-top: 20px;
-    display: inline-block;
+    
+    letter-spacing: .5px;
+    font-size: 17px;
 }
 
 button {
-    padding: 2px 8px;
     font-weight: bold;
-    font-size:  13px;
+    letter-spacing: .5px;
+    padding: 2px 8px;
+    font-size:  15px;
     border-radius: 5px;
-    border-: 2px black;
+    box-shadow: 4px 2px 6px gray;
+
+    
+}
+
+#btn-diem {
+    margin-left: 20px;
+}
+
+button:focus{
+    outline: none;
+    box-shadow: 0 0 2px 2px rgb(16,255,0);
 }
 
 button:hover {
-    background-color: lightgrey;
+    box-shadow: none;
 }
 
-#bkDate {
+input:focus {
+    outline: 3px solid rgb(16,255,0);
+  /*  box-shadow: 4px 4px 5px rgba(0,255,255,.3), -4px -4px 5px rgba(0,255,255,.3), -4px 4px 5px rgba(0,255,255,.3), 4px -4px 5px rgba(0,255,255,.3);*/
+   
+}
+
+.width_70 {
     width: 70px;
 }
 
 #rate{
-    width: 35px;
-}
-
-#lnamount {
-    width: 70px;
+    width: 45px;
 }
 
 input {
-    margin-right: 10px;
-    text-align: right;
-}
-
-span#percent {
-    margin-left: -9px;
     padding-right: 5px;
-    
+    text-align: right;
+    border: 1px solid grey;
+    font-size: 12px;
 }
 
-#paymentInput td {
-    padding-right: 10px;
-    padding-left: 15px;;
+#payments-display, #paymentinput-display{
+    display: none;
 }
 
-#pmts td, #pmts th {
-    padding: 5px;
+#paymentDate,#paymentAmount {
+    margin-top: 6px;
+}
+
+#pmts th {
+    /*position: sticky;*/
+    top: 0;
+    padding: 10px 15px 5px 0;
+    text-align: right;
+   
 }
 
 #pmts td {
     text-align: right;
+    padding-right: 15px;
+
     
 }
 
+.total-label {
+    display: inline-block;
+    text-align: right;
+    width: 160px;
+    margin-left: -20px;
+    padding-bottom: 10px;
+}
