@@ -21,6 +21,7 @@
 <div id="initDiem">
   <span>The Initial "Per Diem" or Daily Interest Amount is&nbsp;<span id="initPerDiem" class="ow"></span> per day.</span>
 </div>
+
 <div id="example-car">
   <span>A <span class="ow">5</span> year or <span class="ow">60</span> month term would be a monthly payment of about &nbsp;<span id="pmt60" class="ow"></span>.</span>
 </div>
@@ -30,7 +31,7 @@
   <span>A <span class="ow">30</span> year or <span class="ow">360</span> month term would be a monthly payment of about &nbsp;<span id="pmt360" class="ow"></span>.</span>
 </div>
 <div id="tip1">
-  <span>Make Payments below to find out various payment strategies affect the payoff date and total interest paid.</span >
+  Below you can submit various payment combinations and see how the total interest paid and loan term differs.
 </div>
 <br>
 <br>
@@ -78,7 +79,7 @@
         <th>Principal</th>
         <th>Balance</th>
         <th>Per Diem</th>
-        <th>I.N.P.</th>
+        <th class="tooltip">I.N.P.<span class="tooltiptext">I.N.P. is Interest Not Paid (the amount carries into next payment)</span></th>
       </tr>
     </tbody>    
 </table>
@@ -609,6 +610,11 @@ function deleteTotal(x){
     document.querySelector("#totals-display h3").style.display = "none"; //turns off H3 "Totals when no saved totals"
   }
 }
+
+function formatNumber(number) {
+  return number.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+}
+
 
 </script>
 </html>
