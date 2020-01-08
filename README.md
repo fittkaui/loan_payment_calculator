@@ -3,6 +3,6 @@ Make regular and principal-only payments to see the amortization and per diem in
 
 This is the second little project I've thought of and decided to make using Javascript.  I intend to prove that the difference between making additional principal-only payments and additional regular payments is very small on most loans.
 
-https://fittkaui.github.io/loan_payment_calculator/
+https://fittkaui.github.io/loan_payment_calculator/loanpaymentcalculator.html
 
 -JP
