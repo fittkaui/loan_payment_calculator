@@ -353,3 +353,8 @@ th.tooltip {
     95% { opacity:0; }
     100% { opacity:1; }
 }
+
+#email{
+    color:gray;
+    padding-bottom: 2px;
+}

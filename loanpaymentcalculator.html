@@ -101,6 +101,7 @@
       </div>
     </div>
 </div> 
+<div id="email">Email Feedback or Bugs to: jp.kewley@gmail.com</div>
 </div>
 </body>
 <script>
@@ -214,12 +215,12 @@ function getPerDiem(x){
     document.getElementById("example-home").style.display = 'none';
     //Get example Payment Amounts
     if(data.lnAmount < 100000){
-      const pmt60 = (PMT(data.rate/12, 60, -data.lnAmount, 0, 0)).toFixed(2);
+      const pmt60 = formatNumber(PMT(data.rate/12, 60, -data.lnAmount, 0, 0));
       document.getElementById("example-car").style.display = 'inline-block';
       document.getElementById("pmt60").innerHTML = "$" + pmt60;
     }else{
-      const pmt180 = (PMT(data.rate/12, 180, -data.lnAmount, 0, 0)).toFixed(2);
-      const pmt360 = (PMT(data.rate/12, 360, -data.lnAmount, 0, 0)).toFixed(2);
+      const pmt180 = formatNumber(PMT(data.rate/12, 180, -data.lnAmount, 0, 0));
+      const pmt360 = formatNumber(PMT(data.rate/12, 360, -data.lnAmount, 0, 0));
       document.getElementById("example-home").style.display = 'inline-block';
       document.getElementById("pmt180").innerHTML = "$" + pmt180;
       document.getElementById("pmt360").innerHTML = "$" + pmt360;
@@ -547,8 +548,8 @@ function calcTotals(){
   IntPd = Math.round(IntPd * 1e2) / 1e2;
   
   totpmts.innerHTML = pmtslength;
-  totamtpd.innerHTML = AmtPd;
-  totintpd.innerHTML = IntPd; //Math.round(IntPd * 1e2) / 1e2;
+  totamtpd.innerHTML = formatNumber(AmtPd);
+  totintpd.innerHTML = formatNumber(IntPd); //Math.round(IntPd * 1e2) / 1e2;
   function calcAmtPd(){
     let tot = 0;
     for(let i = 1; i <= pmtslength; i++){
@@ -574,9 +575,9 @@ function saveTotals(){
   <div class="total-label">Number of Payments:</div>
   <div class="inline-top" id="totpmts-${svdcnt}">${pmtslength}</div>
   <div class="total-label" >Total Amount Paid:</div>
-  <div class="inline-top" id="totamtpd-${svdcnt}">${AmtPd}</div>
+  <div class="inline-top" id="totamtpd-${svdcnt}">${formatNumber(AmtPd)}</div>
   <div class="total-label" >Total Interest Paid:</div>
-  <div class="inline-top" id="totintpd-${svdcnt}">${IntPd}</div>
+  <div class="inline-top" id="totintpd-${svdcnt}">${formatNumber(IntPd)}</div>
   <button type="button" id="delete-btn" onclick="deleteTotal(${svdcnt})">&nbsp; Delete &nbsp;</button>
 
           `;
