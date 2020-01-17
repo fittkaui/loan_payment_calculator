@@ -9,7 +9,15 @@
  <!--<link rel="shortcut icon" type="image/png" href="img/favicon.png">--> 
 </head>
 <body>
-<div class="ta-center">
+<nav>
+    <ul class="navigation__list">
+      <li class="navigation__item"><a href="#" id="home" class="navigation__link">Home</a></li>  
+      <li class="navigation__item"><a href="#purpose" class="navigation__link" onclick="showElement('purpose__container')">Purpose</a></li>
+      <li class="navigation__item"><a href="#developer" class="navigation__link" onclick="showElement('developer__container')">Developer</a></li>
+    
+    </ul>
+</nav>
+<div class="loan__container">
 <h2>Loan Payment Calculator</h2>
 <h3>Loan Input</h3>
 <div id="diemInput">
@@ -30,9 +38,9 @@
   <br>
   <span>A <span class="ow">30</span> year or <span class="ow">360</span> month term would be a monthly payment of about &nbsp;<span id="pmt360" class="ow"></span>.</span>
 </div>
-<div id="tip1">
+<!--<div id="tip1">
   Below you can submit various payment combinations and see how the total interest paid and loan term differs.
-</div>
+</div>-->
 <br>
 <br>
 <div id="paymentinput-display">
@@ -101,12 +109,58 @@
       </div>
     </div>
 </div> 
-<div id="email">Email Feedback or Bugs to: jp.kewley@gmail.com</div>
 </div>
+<div id="purpose__container">
+<h3 id="purpose">Purpose</h3>
+<p>The original purpose for this calculator was to help confirm a "theory": <span style="font-weight: bold;">Only a very small percent of the total interest paid is saved by applying additional loan payments to principal versus a regular payment (which pays any accrued interst first).</span></p>
+<p>I searched the internet for a calculator which allows custom principal and regular payments and couldn't find one.  "This can't be" I said to myself, and in that moment, I decided to build one. "The world will be able to calculate the effects of making additional payments on a loan from this point henceforth," I proclaimed... Ok, I made up the previous sentence, but I really do hope this app can help familiarize people with the math behind loans.</p>
+<p>I purposely included the per diem column, which is the daily dollar amount of interest accrueing on a loan. Most calculators do not include the per diem, but I think it is helpful to see how it slowly decreases over the life of a loan.  Another column included in the payments is I.N.P., or interest not paid.  It is importand to show this figure when looking at principal only payments to understand how the interest is deffered or carried into the next payment.</p> 
+</p>Are you wondering if I was able to prove my "theory"? </p>
+<p> Well, let's look at a $100,000 loan at an interest rate of 10%.  A 30 year term would be a monthly payment of $878. If you made a principal only payment for the same amount between the 1st and 2nd Regular Monthly payments, it would look like this:  </p>
+<img src="./img/example1.png" alt="3 Payments" width="90%">
+<p>Notice that after the principal only payment on 2/27, The loan balance is reduced to only $99,093.32.  If we change the principal only payment to a regular payment, the loan balance is only reduced to $99,449.38:</p>
+<img src="./img/example2.png" alt="3 Payments" width="90%">
+<p>Wait a second though, this isn't a fair comparision. There is interest not paid (I.N.P.) for the principal only payment of $356.06.  We should compare the balances after the 3/14 payment, so we have $99,004.63 compared to $99,006.19.  That's a savings of $1.56 and the savings will actually decrease each payment over the life of the loan.  If we look at the total savings by making addtional payments over the entire loan, the total savings is $112.16.  Since the total interest paid with additional principal payments is $36,529.58, the savings is only .3% of that amount.  I would say this proves my theory, however please let me know if think I'm wrong.</p>
+<a onclick="hideElement('purpose__container'),hideElement('developer__container')" href="#home">Back to Home</a>
+</div>
+<div id="developer__container">
+  <h3 id="developer">Developer</h3>
+  <p>Hello, my name is JP Kewley and this is my second "app." It's built with plain old fashioned JS, HTML, and CSS.  My main focus here was Javascript practice, but maybe I'll add more styling in the future.  I have been pursuing a career in banking and IT for over 15 years, primarily working in Helpdesk and Online Banking Support Areas. Problem solving, helping others, and building things are the three things I enjoy most, so it's very exciting for me to finally be able to build software. Javascript is my first programming language, and learning it has honestly been one of the most challenging things I've done thus far in my life.  I'm also learning SQL simutaneously and really enjoying working with real data to find, scope, and solve problems. </p>
+  <p>Well, that's enough about me for now.  Please email if you have any questions, feedback, or bugs to report.  </p>
+  
+  <div class="tooltip">
+    <button class="no__btn" onclick="copy()" onmouseout="outFunc()"><span class="tooltiptext" id="myTooltip">Copy to clipboard</span>jp.kewley@gmail.com</button>
+  </div>
+  <br><br>
+  <a onclick="hideElement('purpose__container'),hideElement('developer__container')" href="#home">Back to Home</a>
+  <input type="text" value="jp.kewley@gmail.com" id="email">
+  </div>
 </body>
 <script>
 
+function showElement(el){
+  document.getElementById(`${el}`).style.display = "block";
+}
+
+function hideElement(el){
+  document.getElementById(`${el}`).style.display = "none";
+}
+
+function copy() {
   
+  var copyText = document.getElementById("email");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  
+  var tooltip = document.getElementById("myTooltip");
+  tooltip.innerHTML = "Copied";
+}
+
+function outFunc() {
+  var tooltip = document.getElementById("myTooltip");
+  tooltip.innerHTML = "Copy to clipboard";
+}
 
 /////////////////////OBJECTS & VARIABLES////////////////////////////////////////////////////
 const data = {};
@@ -225,7 +279,7 @@ function getPerDiem(x){
       document.getElementById("pmt180").innerHTML = "$" + pmt180;
       document.getElementById("pmt360").innerHTML = "$" + pmt360;
     }
-    document.getElementById("tip1").style.display = 'inline-block';
+    //document.getElementById("tip1").style.display = 'inline-block';
     document.getElementById("paymentinput-display").style.display = 'inline-block';
     data.intnpd = 0; 
 
