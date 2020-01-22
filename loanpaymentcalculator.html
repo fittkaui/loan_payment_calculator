@@ -138,35 +138,10 @@
 </body>
 <script>
 
-function showElement(el){
-  document.getElementById(`${el}`).style.display = "block";
-}
-
-function hideElement(el){
-  document.getElementById(`${el}`).style.display = "none";
-}
-
-function copy() {
-  
-  var copyText = document.getElementById("email");
-  copyText.select();
-  copyText.setSelectionRange(0, 99999);
-  document.execCommand("copy");
-  
-  var tooltip = document.getElementById("myTooltip");
-  tooltip.innerHTML = "Copied";
-}
-
-function outFunc() {
-  var tooltip = document.getElementById("myTooltip");
-  tooltip.innerHTML = "Copy to clipboard";
-}
-
-/////////////////////OBJECTS & VARIABLES////////////////////////////////////////////////////
 const data = {};
 const el = {};  //for DOM query strings/HTML element values
 
- init();
+init();
 
 function init() {
 
@@ -180,57 +155,27 @@ function init() {
 }
 
 function clearPmtData() {
-
   document.getElementById("paymentDate").value = "";
-
 }
 
 function clearPayments() {
-
   //delete DOM 
   const pmtslength = document.getElementById("pmts").children.length;
     for(i = pmtslength -1 ; i >= 1; i--){
       let elem = document.getElementById(`pmt-${i}`);
       elem.parentNode.removeChild(elem);
     }
+  //Reset Current Totals
   totpmts.innerHTML = 0;
   totamtpd.innerHTML = 0;
   totintpd.innerHTML = 0; 
-
+  //Reset necessary variables
   data.nwlnAmount = document.getElementById("lnAmount").value;
   data.finalpmtdt = '';
 
   clearPmtData();
   hideCurrTotals();
   document.getElementById("payments-display").style.display = "none";
-
-}
-
-function PMT(ir, np, pv, fv, type) {
-    /*
-     * ir   - interest rate per month
-     * np   - number of periods (months)
-     * pv   - present value
-     * fv   - future value
-     * type - when the payments are due:
-     *        0: end of the period, e.g. end of month (default)
-     *        1: beginning of period
-     */
-    var pmt, pvif;
-
-    fv || (fv = 0);
-    type || (type = 0);
-
-    if (ir === 0)
-        return -(pv + fv)/np;
-
-    pvif = Math.pow(1 + ir, np);
-    pmt = - ir * pv * (pvif + fv) / (pvif - 1);
-
-    if (type === 1)
-        pmt /= (1 + ir);
-
-    return pmt;
 }
 
 function getPerDiem(x){
@@ -666,10 +611,57 @@ function deleteTotal(x){
   }
 }
 
+//Additional Functions//
+
 function formatNumber(number) {
   return number.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
 }
 
+function showElement(el){
+  document.getElementById(`${el}`).style.display = "block";
+}
+
+function hideElement(el){
+  document.getElementById(`${el}`).style.display = "none";
+}
+
+function copy() {
+  
+  var copyText = document.getElementById("email");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  
+  var tooltip = document.getElementById("myTooltip");
+  tooltip.innerHTML = "Copied";
+}
+
+function outFunc() {
+  var tooltip = document.getElementById("myTooltip");
+  tooltip.innerHTML = "Copy to clipboard";
+}
+
+function PMT(ir, np, pv, fv, type) {
+    /*
+     * ir   - interest rate per month
+     * np   - number of periods (months)
+     * pv   - present value
+     * fv   - future value
+     * type - when the payments are due:
+     *        0: end of the period, e.g. end of month (default)
+     *        1: beginning of period
+     */
+    var pmt, pvif;
+    fv || (fv = 0);
+    type || (type = 0);
+    if (ir === 0)
+        return -(pv + fv)/np;
+    pvif = Math.pow(1 + ir, np);
+    pmt = - ir * pv * (pvif + fv) / (pvif - 1);
+    if (type === 1)
+        pmt /= (1 + ir);
+    return pmt;
+}
 
 </script>
 </html>
