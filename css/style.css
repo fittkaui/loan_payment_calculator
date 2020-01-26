@@ -84,6 +84,10 @@ h2 {
     text-transform: uppercase;
 }
 
+#nomobile h2 {
+    font-size: 18px;
+}
+
 h3 {
     font-family: 'Raleway';
     font-size: 24px;
@@ -301,36 +305,6 @@ input {
     padding-bottom: 10px;
 }
 
-th.tooltip {
-    text-decoration: underline;
-}
-
-.tooltip {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .tooltip .tooltiptext {
-    visibility: hidden;
-    width: 550px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-  
-    /* Position the tooltip */
-    position: absolute;
-    left: -380px;
-    top: -40px;
-
-    z-index: 1;
-  }
-  
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-  }
-
   #example-car {
       margin: 17px 10px 0 10px;
   }
@@ -365,28 +339,46 @@ th.tooltip {
     left:-9999px
 }
 
-.tooltip {
+  @media screen and (max-width: 1000px) {
+    #monitor{
+        display: none;
+    }
+    #nomobile{
+        display: block;
+        color:black;
+    }
+  }
+  @media screen and (min-width: 1000px){
+    #monitor{
+        display: block;
+    }
+    #nomobile{
+        display: none;
+    } 
+  }
+
+  .tooltip {
     position: relative;
     display: inline-block;
   }
   
-  .tooltip .tooltiptext {
+  .tooltiptext {
     visibility: hidden;
-    width: 140px;
     background-color: #555;
     color: #fff;
     text-align: center;
     border-radius: 6px;
-    padding: 5px;
+    padding: 5px 10px;
     position: absolute;
     z-index: 1;
-    bottom: 150%;
+    bottom: 120%;
+    transform: translateX(-50%);
     left: 50%;
-    margin-left: -75px;
     opacity: 0;
     transition: opacity 0.3s;
   }
   
+  /*for arrow on tooltip*/
   .tooltip .tooltiptext::after {
     content: "";
     position: absolute;
@@ -403,8 +395,7 @@ th.tooltip {
     opacity: 1;
   }
 
-  .no__btn {
-      border: none;
-      box-shadow: none;
-      color:navy;
+ .btn-1 {
+      outline: 1px solid black;
+      padding: 5px 10px;
   }
