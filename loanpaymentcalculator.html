@@ -20,6 +20,13 @@
     </nav>
     <div class="loan__container">
     <h2>Loan Payment Calculator</h2>
+    <div id="instruc1">
+      <span>If you already have a Loan</span> 
+      <br>&nbsp;&nbsp;-Use today for the Booking Date
+      <br>&nbsp;&nbsp;-Enter the current Interest Rate 
+      <br>&nbsp;&nbsp;-Enter the balance as the Loan Amount
+   
+    </div>
     <h3>Loan Input</h3>
     <div id="diemInput">
         <label for="bkDate">Booking Date: </label><input type="text" id="bkDate" class="width_70">
@@ -38,6 +45,21 @@
       <span>A <span class="ow">15</span> year or <span class="ow">180</span> month term would be a monthly payment of about &nbsp;<span id="pmt180" class="ow"></span>.</span>
       <br>
       <span>A <span class="ow">30</span> year or <span class="ow">360</span> month term would be a monthly payment of about &nbsp;<span id="pmt360" class="ow"></span>.</span>
+    </div>
+    <div style="display: block;">
+      <div id="example-home2">
+        <span>Note: Mortgage Payments often include taxes and insurance. 
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          Check your monthly statement or online banking to find 
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          your current loan payment amount (only the principal and  
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          interest portion of your payment).</span>
+      </div>
+    </div>
+    <div id="pmtTips">
+      <span>Now Submit the payment(s) of your choice below!  
+      </span>
     </div>
     <br>
     <br>
@@ -97,11 +119,11 @@
         <div id="totals-position">
           <div class="totals" id="totals-current"> 
                 <h4>Current Totals</h4>
-                <div class="total-label">Number of Payments:</div>
-                <div class="inline-top" id="totpmts">0</div>
-                <div class="total-label" >Total Amount Paid:</div>
+                <div class="total-label">Payments:</div>
+                <div class="inline-top" id="totpmts">0</div><br>
+                <div class="total-label" >Total Paid:</div>
                 <div class="inline-top" id="totamtpd">0</div>
-                <div class="total-label" >Total Interest Paid:</div>
+                <div class="total-label" >Total Interest:</div>
                 <div class="inline-top" id="totintpd">0</div>
                 <button type="button" id="save-btn" onclick="saveTotals()">Save Totals</button>
           </div>
@@ -113,6 +135,8 @@
     <p>The original purpose for this calculator was to help confirm a "theory": <span style="font-weight: bold;">Only a very small percent of the total interest paid is saved by applying additional loan payments to principal versus a regular payment (which pays any accrued interst first).</span></p>
    <p>I challenge you to use the calculator to detemine whether or not my theory was correct.</p>
    <p>This calculator can also be used to determine if a refinance at a lower rate is worth the closing costs, and many other things if you get creative.</p>
+   <br>
+   <br>
     <a onclick="hideElement('purpose__container'),hideElement('developer__container')" href="#home">Back to Home</a>
     </div>
     <div id="developer__container">
@@ -267,17 +291,22 @@ function getPerDiem(x){
     //Hide example Payment Amounts (in case example terms change based on loan amount)
     document.getElementById("example-car").style.display = 'none';
     document.getElementById("example-home").style.display = 'none';
+    document.getElementById("example-home2").style.display = 'none';
+    document.getElementById("pmtTips").style.display = 'none';
     //Get example Payment Amounts
     if(data.lnAmount < 100000){
       const pmt60 = formatNumber(PMT(data.rate/12, 60, -data.lnAmount, 0, 0));
       document.getElementById("example-car").style.display = 'inline-block';
       document.getElementById("pmt60").innerHTML = "$" + pmt60;
+      document.getElementById("pmtTips").style.display = 'inline-block';
     }else{
       const pmt180 = formatNumber(PMT(data.rate/12, 180, -data.lnAmount, 0, 0));
       const pmt360 = formatNumber(PMT(data.rate/12, 360, -data.lnAmount, 0, 0));
       document.getElementById("example-home").style.display = 'inline-block';
       document.getElementById("pmt180").innerHTML = "$" + pmt180;
       document.getElementById("pmt360").innerHTML = "$" + pmt360;
+      document.getElementById("example-home2").style.display = 'inline-block';
+      document.getElementById("pmtTips").style.display = 'inline-block';
     }
     //document.getElementById("tip1").style.display = 'inline-block';
     document.getElementById("paymentinput-display").style.display = 'inline-block';
@@ -602,8 +631,8 @@ function calcTotals(){
   IntPd = Math.round(IntPd * 1e2) / 1e2;
   
   totpmts.innerHTML = pmtslength;
-  totamtpd.innerHTML = formatNumber(AmtPd);
-  totintpd.innerHTML = formatNumber(IntPd); //Math.round(IntPd * 1e2) / 1e2;
+  totamtpd.innerHTML = "$" + formatNumber(AmtPd);
+  totintpd.innerHTML = "$" + formatNumber(IntPd); //Math.round(IntPd * 1e2) / 1e2;
   function calcAmtPd(){
     let tot = 0;
     for(let i = 1; i <= pmtslength; i++){
@@ -626,12 +655,12 @@ function saveTotals(){
   var div = document.createElement('div');
           div.innerHTML = `
   <h4>Saved Totals ${svdcnt}</h4>
-  <div class="total-label">Number of Payments:</div>
-  <div class="inline-top" id="totpmts-${svdcnt}">${pmtslength}</div>
-  <div class="total-label" >Total Amount Paid:</div>
-  <div class="inline-top" id="totamtpd-${svdcnt}">${formatNumber(AmtPd)}</div>
-  <div class="total-label" >Total Interest Paid:</div>
-  <div class="inline-top" id="totintpd-${svdcnt}">${formatNumber(IntPd)}</div>
+  <div class="total-label">Payments:</div>
+  <div class="inline-top" id="totpmts-${svdcnt}">${pmtslength}</div><br>
+  <div class="total-label" >Total Paid:</div>
+  <div class="inline-top" id="totamtpd-${svdcnt}">$${formatNumber(AmtPd)}</div><br>
+  <div class="total-label" >Total Interest:</div>
+  <div class="inline-top" id="totintpd-${svdcnt}">$${formatNumber(IntPd)}</div><br>
   <button type="button" id="delete-btn" onclick="deleteTotal(${svdcnt})">&nbsp; Delete &nbsp;</button>
 
           `;
