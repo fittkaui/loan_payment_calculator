@@ -111,14 +111,8 @@
     <div id="purpose__container">
     <h3 id="purpose">Purpose</h3>
     <p>The original purpose for this calculator was to help confirm a "theory": <span style="font-weight: bold;">Only a very small percent of the total interest paid is saved by applying additional loan payments to principal versus a regular payment (which pays any accrued interst first).</span></p>
-    <p>I searched the internet for a calculator which allows custom principal and regular payments and couldn't find one.  "This can't be" I said to myself, and in that moment, I decided to build one. "The world will be able to calculate the effects of making additional payments on a loan from this point henceforth," I proclaimed... Ok, I made up the previous sentence, but I really do hope this app can help familiarize people with the math behind loans.</p>
-    <p>I purposely included the per diem column, which is the daily dollar amount of interest accrueing on a loan. Most calculators do not include the per diem, but I think it is helpful to see how it slowly decreases over the life of a loan.  Another column included in the payments is I.N.P., or interest not paid.  It is importand to show this figure when looking at principal only payments to understand how the interest is deffered or carried into the next payment.</p> 
-    </p>Are you wondering if I was able to prove my "theory"? </p>
-    <p> Well, let's look at a $100,000 loan at an interest rate of 10%.  A 30 year term would be a monthly payment of $878. If you made a principal only payment for the same amount between the 1st and 2nd Regular Monthly payments, it would look like this:  </p>
-    <img src="./img/example1.png" alt="3 Payments" width="90%">
-    <p>Notice that after the principal only payment on 2/27, The loan balance is reduced to only $99,093.32.  If we change the principal only payment to a regular payment, the loan balance is only reduced to $99,449.38:</p>
-    <img src="./img/example2.png" alt="3 Payments" width="90%">
-    <p>Wait a second though, this isn't a fair comparision. There is interest not paid (I.N.P.) for the principal only payment of $356.06.  We should compare the balances after the 3/14 payment, so we have $99,004.63 compared to $99,006.19.  That's a savings of $1.56 and the savings will actually decrease each payment over the life of the loan.  If we look at the total savings by making addtional payments over the entire loan, the total savings is $112.16.  Since the total interest paid with additional principal payments is $36,529.58, the savings is only .3% of that amount.  I would say this proves my theory, however please let me know if think I'm wrong.</p>
+   <p>I challenge you to use the calculator to detemine whether or not my theory was correct.</p>
+   <p>This calculator can also be used to determine if a refinance at a lower rate is worth the closing costs, and many other things if you get creative.</p>
     <a onclick="hideElement('purpose__container'),hideElement('developer__container')" href="#home">Back to Home</a>
     </div>
     <div id="developer__container">
@@ -155,10 +149,10 @@
     <h2>Please check back on a larger screen</h2>
     <br>
     <p>
-      My apologies. This loan calculator requires a laptop or monitor, but you should definately email this link to yourself so you don't forget to check it out. 
+      My apologies. This loan calculator requires a display width of 1000 pixels to accomodate the amortization table. Click below to email this link to yourself or create a bookmark for later. 
     </p>
     <p>  
-      This calculator will allow you to experiment with payment stategies and see how much extra payments on a loan will save interest during the remainder of any loan.  
+      This calculator will allow you to experiment with payment stategies and see how much extra payments on a loan will save interest during the remainder of any loan, so don't forget to check it out!  
     </p>
     <br>
     <br>
@@ -707,6 +701,53 @@ function PMT(ir, np, pv, fv, type) {
         pmt /= (1 + ir);
     return pmt;
 }
+//, "mousedown", "mouseup", "select", "contextmenu", "drop"
+/*function setInputFilter(textbox, inputFilter) {
+  ["input", "keydown", "keyup"].forEach(function(event) {
+    textbox.addEventListener(event, function() {
+      console.log(event);
+      if (inputFilter(this.value)) {
+        this.value = addCommas(this.value);
+        this.oldValue = this.value;
+        this.oldSelectionStart = this.selectionStart;
+        this.oldSelectionEnd = this.selectionEnd;
+      } else if (this.hasOwnProperty("oldValue")) {
+        this.value = this.oldValue;
+        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+      } else {
+        this.value = "";
+      }
+    });
+  });
+}
+*/
+
+let x = document.getElementById("lnAmount");
+x.addEventListener('keyup', function(){
+ 
+  
+});
+  
+
+
+
+// Install input filters.
+//setInputFilter(document.getElementById("lnAmount"), function(value) {
+  //return /^-?\d*$/.test(value); });
+/*setInputFilter(document.getElementById("uintTextBox"), function(value) {
+  return /^\d*$/.test(value); });
+setInputFilter(document.getElementById("intLimitTextBox"), function(value) {
+  return /^\d*$/.test(value) && (value === "" || parseInt(value) <= 500); });
+setInputFilter(document.getElementById("floatTextBox"), function(value) {
+  return /^-?\d*[.,]?\d*$/.test(value); });
+setInputFilter(document.getElementById("currencyTextBox"), function(value) {
+  return /^-?\d*[.,]?\d{0,2}$/.test(value); });
+setInputFilter(document.getElementById("latinTextBox"), function(value) {
+  return /^[a-z]*$/i.test(value); });
+setInputFilter(document.getElementById("hexTextBox"), function(value) {
+  return /^[0-9a-f]*$/i.test(value); });
+*/
+
 
 </script>
 
